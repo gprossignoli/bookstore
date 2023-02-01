@@ -13,6 +13,7 @@ services:
       - db
     volumes:
       - .:/app
+    command: "pipenv run flask run --host=${FLASK_RUN_HOST} --port=${FLASK_RUN_PORT}"
   db:
     image: postgres:11.8
     container_name: "bookstore_database"

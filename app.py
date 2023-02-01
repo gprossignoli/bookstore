@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from config import Config
 
@@ -10,4 +12,4 @@ def create_app(config_class=Config):
 
 if __name__ == '__main__':
 	app = create_app()
-	app.run(port=8001)
+	app.run(host=os.getenv("FLASK_RUN_PORT"), port=os.getenv("FLASK_RUN_PORT"))
