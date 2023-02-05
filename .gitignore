@@ -135,4 +135,7 @@ dmypy.json
 # env files
 .env
 .secrets.env
+
+# Docker volumes
 postgres-data/
+/deploy/local_db/
