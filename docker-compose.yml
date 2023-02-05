@@ -28,3 +28,4 @@ services:
       - ./deploy/local_db:/docker-entrypoint-initdb.d
     env_file:
       - .env
+      - .secrets.env
