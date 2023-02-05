@@ -24,8 +24,8 @@ services:
     ports:
       - "54321:${DB_PORT}"
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-      - ./deploy/local_db:/docker-entrypoint-initdb.d
+      - ./postgres/postgres-data:/var/lib/postgresql/data
+      - ./postgres/local_db:/docker-entrypoint-initdb.d
     env_file:
       - .env
       - .secrets.env

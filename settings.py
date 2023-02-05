@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 ROOT_DIR = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
-ENV_FILE = os.path.abspath(os.path.join(ROOT_DIR, "../.env"))
+ENV_FILE = os.path.abspath(os.path.join(ROOT_DIR, ".env"))
 
 # LOGGING CONFIG
 
@@ -40,5 +40,5 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
-DB_URI =  f'postgres://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+DB_URI = f'postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
