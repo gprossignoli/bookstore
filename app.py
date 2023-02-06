@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, g
 
+from config.blueprints import register_blueprints
 from config.db import configure_db
 from settings import SECRET_KEY
 
@@ -12,6 +13,7 @@ def create_app() -> Flask:
 	with app.app_context():
 		configure_db(app)
 		g.db.create_all()
+		register_blueprints(app)
 
 	return app
 

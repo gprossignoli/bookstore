@@ -1,5 +1,20 @@
 version: "3.8"
 services:
+  db:
+    image: postgres:11.8
+    container_name: "bookstore_database"
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "54321:${DB_PORT}"
+    volumes:
+      - ./deploy/postgres/postgres-data:/var/lib/postgresql/data
+      - ./deploy/postgres/local_db:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+      - .secrets.env
   api:
     build:
       context: .
@@ -14,18 +29,5 @@ services:
     volumes:
       - .:/app
     command: "pipenv run flask run --host=${FLASK_RUN_HOST} --port=${FLASK_RUN_PORT}"
-  db:
-    image: postgres:11.8
-    container_name: "bookstore_database"
-    environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-    ports:
-      - "54321:${DB_PORT}"
-    volumes:
-      - ./postgres/postgres-data:/var/lib/postgresql/data
-      - ./postgres/local_db:/docker-entrypoint-initdb.d
-    env_file:
-      - .env
-      - .secrets.env
+    depends_on:
+      - db
