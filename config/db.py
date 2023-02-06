@@ -12,5 +12,6 @@ def configure_db(app: Flask) -> None:
 	app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 	# initialize the app with the extension
 	db.init_app(app)
+	db.create_all()
 
 	g.db = db
