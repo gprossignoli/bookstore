@@ -20,4 +20,4 @@ def create_app() -> Flask:
 
 if __name__ == '__main__':
 	app = create_app()
-	app.run(host=os.getenv("FLASK_RUN_PORT"), port=os.getenv("FLASK_RUN_PORT"))
+	app.run(host="0.0.0.0", port=8002)

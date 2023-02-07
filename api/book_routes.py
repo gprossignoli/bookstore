@@ -44,7 +44,7 @@ def __get_data_from_request():
 
 def __validate_purchase_book_body(data: Dict) -> Union[Dict, Response]:
 	schema = {
-		"userId": {
+		"user_id": {
 			"type": "string",
 			"nullable": False,
 			"empty": False,
@@ -63,7 +63,7 @@ def __validate_purchase_book_body(data: Dict) -> Union[Dict, Response]:
 	body = {"user_id": data.get("userId"), "quantity": data.get("quantity")}
 	try:
 		v = Validator(schema=schema)
-		v.allow_unknown = True
+		v.allow_unknown = False
 		val = v.validate(body, schema)
 
 		if not val:
