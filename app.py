@@ -1,18 +1,15 @@
-import os
-
-from flask import Flask, g
+from flask import Flask
 
 from config.blueprints import register_blueprints
 from config.db import configure_db
-from settings import SECRET_KEY
+from settings import SECRET_KEY, db
 
 
 def create_app() -> Flask:
 	app = Flask(__name__)
 	app.config["SECRET_KEY"] = SECRET_KEY
 	with app.app_context():
-		configure_db(app)
-		g.db.create_all()
+		configure_db(app, db)
 		register_blueprints(app)
 
 	return app

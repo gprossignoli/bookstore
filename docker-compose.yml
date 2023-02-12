@@ -8,7 +8,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     ports:
-      - "54321:${DB_PORT}"
+      - "${DB_PORT}:5432"
     volumes:
       - ./deploy/postgres/postgres-data:/var/lib/postgresql/data
       - ./deploy/postgres/local_db:/docker-entrypoint-initdb.d
@@ -23,7 +23,7 @@ services:
         development: "True"
     restart: on-failure
     ports:
-      - "8001:${FLASK_RUN_PORT}"
+      - "${FLASK_RUN_PORT}:8001"
     links:
       - db
     volumes:

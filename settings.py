@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from dotenv import load_dotenv
-
+from flask_sqlalchemy import SQLAlchemy
 
 ROOT_DIR = os.path.dirname((os.path.realpath(__file__)))
 ENV_FILE = os.path.abspath(os.path.join(ROOT_DIR, ".env"))
@@ -47,3 +47,4 @@ DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
 DB_URI = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+db = SQLAlchemy()
