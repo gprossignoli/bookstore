@@ -1,12 +1,10 @@
 import csv
-import random
 from datetime import datetime
-from typing import List
 
 from flask import Blueprint, Response
 from flask_sqlalchemy.session import Session
 
-from models.book import Book
+from src.models.book import Book
 from settings import ROOT_DIR, db
 
 admin_blueprint = Blueprint(name="admin", import_name=__name__, url_prefix="/admin")

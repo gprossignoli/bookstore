@@ -6,8 +6,9 @@ from flask import Blueprint, request, Response
 from cerberus.validator import Validator
 from cerberus.errors import ValidationError
 
-from application.purchase_book.purchase_book_command import PurchaseBookCommand
-from models.book_exception import BookException
+from src.application.command_executor import CommandExecutor
+from src.application.purchase_book.purchase_book_command import PurchaseBookCommand
+from src.models.book_exception import BookException
 
 book_blueprint = Blueprint(name="book", import_name=__name__, url_prefix="/books")
 
@@ -26,8 +27,9 @@ def purchase_book(book_id: int):
 	body = __validate_purchase_book_body(data)
 
 	try:
-		purchase_book_command = PurchaseBookCommand(book_id, body["user_id"], body["quantity"])
-		purchase_book_command.execute()
+		purchase_book_command = PurchaseBookCommand(book_id=book_id, user_id=body["user_id"], quantity=body["quantity"])
+		CommandExecutor().execute(purchase_book_command)
+
 		return Response(response=ujson.dumps("ok"), status=200, mimetype='application/json')
 	except BookException as e:
 		return Response(response=ujson.dumps(e.error), status=404, mimetype='application/json')
