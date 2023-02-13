@@ -3,7 +3,7 @@ import random
 from datetime import datetime
 from typing import List
 
-from flask import Blueprint
+from flask import Blueprint, Response
 from flask_sqlalchemy.session import Session
 
 from models.book import Book
@@ -19,12 +19,11 @@ def gen_data():
 	with open(file_path, 'r') as file:
 		reader = csv.DictReader(file)
 		rows = [row for row in reader]
-
-	filtered_rows = __subset_rows_by_publisher(rows)
+		rows = rows[:10000]
 
 	session = Session(db)
 
-	for row in filtered_rows:
+	for row in rows:
 		authors = row['authors']
 		title = row['title']
 		isbn = row['isbn']
@@ -36,17 +35,12 @@ def gen_data():
 
 		publisher = row['publisher']
 		book = Book(title=title, authors=authors, isbn=isbn, publication_date=publication_date, publisher=publisher)
-		session.add(book)
+		print(book.title, book.isbn)
+		try:
+			session.add(book)
+			session.commit()
+		except Exception as e:
+			session.rollback()
+			print(e)
 
-	session.commit()
-
-
-def __subset_rows_by_publisher(data) -> List:
-	publishers = set([row['publisher'] for row in data])
-	filtered_rows = []
-	for publisher in publishers:
-		publisher_rows = [row for row in data if row['publisher'] == publisher]
-		filtered_row = random.choice(publisher_rows)
-		filtered_rows.append(filtered_row)
-
-	return random.sample(filtered_rows, min(len(filtered_rows), 10000))
+	return Response(response={"Books inserted in DB"}, status=200)
