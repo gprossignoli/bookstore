@@ -1,20 +1,12 @@
 from flask_sqlalchemy.session import Session
 
-from models.purchase import Purchase
-from models.purchase_exception import PurchaseException
-from repositories.book_repository import BookRepository, BookNotFoundException
-from repositories.user_repository import UserRepository
+from src.models.purchase import Purchase
+from src.models.purchase_exception import PurchaseException
+from src.repositories.book_repository import BookRepository, BookNotFoundException
+from src.repositories.user_repository import UserRepository
 from settings import db
 from src.application.command_handler import CommandHandler
 from src.application.purchase_book.purchase_book_command import PurchaseBookCommand
-
-
-"""
-generar un modelo purchase con los datos del command, añadiendo created_at
-guardar en db el purchase
-crear el evento purchase_created
-publicar el evento
-"""
 
 
 class PurchaseBookCommandHandler(CommandHandler):

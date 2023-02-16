@@ -9,7 +9,7 @@ from cerberus.errors import ValidationError
 from flask import Blueprint, Response, request
 from flask_sqlalchemy.session import Session
 
-from models.user import User
+from src.models.user import User
 from src.models.book import Book
 from settings import ROOT_DIR, db
 

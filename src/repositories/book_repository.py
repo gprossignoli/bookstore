@@ -1,4 +1,4 @@
-from models.book import Book
+from src.models.book import Book
 
 
 class BookNotFoundException(Exception):
