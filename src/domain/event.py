@@ -10,7 +10,7 @@ def _get_new_uuid() -> str:
 
 @dataclass
 class Event(ABC):
-	id: Optional[str] = field(default_factory=_get_new_uuid)
+	id: Optional[str] = field(init=False, default_factory=_get_new_uuid)
 
 	@abstractmethod
 	@property
