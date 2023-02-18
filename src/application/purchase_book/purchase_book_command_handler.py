@@ -2,8 +2,8 @@ from flask_sqlalchemy.session import Session
 
 from src.models.purchase import Purchase
 from src.models.purchase_exception import PurchaseException
-from src.repositories.book_repository import BookRepository, BookNotFoundException
-from src.repositories.user_repository import UserRepository
+from src.infrastructure.repositories import BookRepository, BookNotFoundException
+from src.infrastructure.repositories import UserRepository
 from settings import db
 from src.application.command_handler import CommandHandler
 from src.application.purchase_book.purchase_book_command import PurchaseBookCommand
