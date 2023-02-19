@@ -1,0 +1,7 @@
+from enum import Enum
+
+
+class KafkaQos(Enum):
+	AT_MOST_ONCE = 0
+	AT_LEAST_ONCE_ONLY_LEADER_ACKNOWLEDGE = 1
+	AT_LEAST_ONCE_ALL_BROKERS_ACKNOWLEDGE = "all"
