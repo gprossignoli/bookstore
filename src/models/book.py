@@ -11,4 +11,5 @@ class Book(db.Model):
     publication_date = db.Column(db.Date, nullable=False)
     publisher = db.Column(db.String, unique=True, nullable=False)
     stock = db.Column(db.Integer, default=100000000, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     purchases = db.relationship('Purchase', backref='books')

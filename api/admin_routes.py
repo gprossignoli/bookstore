@@ -1,6 +1,7 @@
 import csv
 import re
 from datetime import datetime
+from random import randint
 from typing import Dict, Union
 
 import ujson
@@ -46,7 +47,7 @@ def __generate_books_data(session: Session = None) -> None:
 
 		publisher = row['publisher']
 		book = Book(title=title, authors=authors, isbn=isbn, publication_date=publication_date, publisher=publisher,
-					stock=100000000)
+					stock=100000000, price=randint(10, 60))
 		print(book.title, book.isbn)
 		try:
 			session.add(book)

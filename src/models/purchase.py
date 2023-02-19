@@ -7,4 +7,5 @@ class Purchase(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
 	user_id = db.Column(db.String, db.ForeignKey('users.id'))
-	quantity_id = db.Column(db.Integer)
+	quantity = db.Column(db.Integer)
+	price = db.Column(db.Integer)

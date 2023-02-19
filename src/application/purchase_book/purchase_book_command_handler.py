@@ -28,7 +28,7 @@ class PurchaseBookCommandHandler(CommandHandler):
 		if book.stock == 0 or book.stock - command.quantity < 0:
 			raise PurchaseException(f"No stock available for the book {book.id}")
 
-		purchase = Purchase(book_id=command.book_id, user_id=command.user_id, quantity=command.quantity)
+		purchase = Purchase(book_id=command.book_id, user_id=command.user_id, quantity=command.quantity, price=book.price)
 		book.stock -= command.quantity
 
 		session = Session(db)
