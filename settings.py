@@ -48,3 +48,7 @@ DB_NAME = os.getenv("DB_NAME")
 DB_URI = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy()
+
+# KAFKA
+KAFKA_SERVERS = os.getenv("KAFKA_SERVERS").split(",")
+KAFKA_CLIENT_ID = os.getenv("SERVICE_NAME")
