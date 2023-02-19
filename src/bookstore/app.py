@@ -1,8 +1,8 @@
 from flask import Flask
 
-from config.blueprints import register_blueprints
-from config.db import configure_db
-from settings import SECRET_KEY, db
+from bookstore.config.blueprints import register_blueprints
+from bookstore.config.db import configure_db
+from bookstore.settings import SECRET_KEY, db
 
 
 def create_app() -> Flask:
