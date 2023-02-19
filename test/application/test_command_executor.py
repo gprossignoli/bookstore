@@ -1,8 +1,8 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch, PropertyMock
 
-from src.application import CommandExecutor
-from src.application import CommandHandler
+from bookstore.application import CommandExecutor
+from bookstore.application import CommandHandler
 
 
 class TestCommandExecutor(TestCase):
