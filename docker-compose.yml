@@ -1,5 +1,89 @@
 version: "3.8"
 services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        development: "True"
+    restart: on-failure
+    ports:
+      - "8001:${FLASK_RUN_PORT}"
+    links:
+      - db
+    command: "pipenv run flask run --host=${FLASK_RUN_HOST} --port=8001"
+    depends_on:
+      - db
+      - zookeeper
+      - broker_a
+      - broker_b
+      - broker_c
+    networks:
+      - default
+      - kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    hostname: zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kafka
+    volumes:
+      - ./deploy/kafka/zookeeper-data:/data
+      - ./deploy/kafka/zookeeper-datalog:/datalog
+  broker_a:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker_a
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://broker_a:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    networks:
+      - kafka
+    volumes:
+      - kafka_data_a:/var/lib/kafka/data
+  broker_b:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker_b
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://broker_b:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    networks:
+      - kafka
+    volumes:
+      - kafka_data_b:/var/lib/kafka/data
+  broker_c:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker_c
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://broker_c:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    networks:
+      - kafka
+    volumes:
+      - kafka_data_c:/var/lib/kafka/data
   db:
     image: postgres:11.8
     container_name: "bookstore_database"
@@ -8,26 +92,22 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     ports:
-      - "${DB_PORT}:5432"
+      - "5432:${DB_PORT}"
     volumes:
       - ./deploy/postgres/postgres-data:/var/lib/postgresql/data
       - ./deploy/postgres/local_db:/docker-entrypoint-initdb.d
     env_file:
       - .env
       - .secrets.env
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        development: "True"
-    restart: on-failure
-    ports:
-      - "${FLASK_RUN_PORT}:8001"
-    links:
-      - db
-    volumes:
-      - .:/app
-    command: "pipenv run flask run --host=${FLASK_RUN_HOST} --port=${FLASK_RUN_PORT}"
-    depends_on:
-      - db
+    networks:
+      - default
+
+networks:
+  kafka:
+    name: kafka_cluster
+    driver: bridge
+
+volumes:
+  kafka_data_a:
+  kafka_data_b:
+  kafka_data_c:

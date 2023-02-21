@@ -7,8 +7,14 @@ RUN mkdir /app \
 ARG development
 ENV DEVELOPMENT $development
 
-WORKDIR /app/
-COPY . /app/
+WORKDIR /app
+
+COPY Pipfile /app/
+COPY Pipfile.lock /app/
+COPY books.csv /app/
+COPY .env /app/
+COPY .secrets.env /app/
+COPY src/. /app/
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
@@ -28,5 +34,7 @@ RUN if [ "$DEVELOPMENT" = "True" ]; \
     fi
 
 EXPOSE 8001
+
+WORKDIR /app/bookstore
 
 CMD ["pipenv", "run", "flask", "run"]

@@ -23,12 +23,13 @@ debug_logger.setFormatter(formatter)
 
 # to log general messages
 # x2 files of 2mb
-info_logger = RotatingFileHandler(filename='../../bookstore.log', maxBytes=2097152, backupCount=2)
+print(os.getcwd())
+info_logger = RotatingFileHandler(filename='../bookstore.log', maxBytes=2097152, backupCount=2)
 info_logger.setLevel(logging.INFO)
 info_logger.setFormatter(formatter)
 
 # to log errors messages
-error_logger = RotatingFileHandler(filename='../../bookstore_errors.log', maxBytes=2097152, backupCount=2)
+error_logger = RotatingFileHandler(filename='../bookstore_errors.log', maxBytes=2097152, backupCount=2)
 error_logger.setLevel(logging.ERROR)
 error_logger.setFormatter(formatter)
 
