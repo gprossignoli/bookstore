@@ -37,8 +37,13 @@ logger.addHandler(debug_logger)
 logger.addHandler(info_logger)
 logger.addHandler(error_logger)
 
+
+logger.info(ROOT_DIR)
+logger.info(ENV_FILE)
+
 # API
 SECRET_KEY = os.getenv("SECRET_KEY")
+BOOKS_DATA_PATH = os.getenv("BOOKS_DATA_PATH")
 
 # database connection
 DB_USERNAME = os.getenv("DB_USERNAME")
@@ -51,5 +56,5 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy()
 
 # KAFKA
-KAFKA_SERVERS = os.getenv("KAFKA_SERVERS").split(",")
+KAFKA_SERVERS = os.getenv("KAFKA_SERVERS")
 KAFKA_CLIENT_ID = os.getenv("SERVICE_NAME")

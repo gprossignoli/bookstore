@@ -13,17 +13,11 @@ class KafkaTopicsManager:
 	def create_topic(self, topic_name: str, num_partitions: int, replication_factor: int, config: Optional[dict] = None) -> None:
 		topic_to_create = self.__create_topic_config(config, num_partitions, replication_factor, topic_name)
 
-		topic_metadata = self.__kafka_admin.list_topics(topic=topic_name)
+		cluster_metadata = self.__kafka_admin.list_topics()
 
-		topic_doesnt_exists_already = topic_metadata.error is not None
-		topic_already_exists = topic_metadata.config == topic_to_create.config
-
-		if topic_doesnt_exists_already is False:
+		topic_data = cluster_metadata.topics.get(topic_name)
+		if topic_data is None:
 			self.__kafka_admin.create_topics([topic_to_create])
-		elif topic_already_exists:
-			pass
-		else:
-			raise Exception('Topic exists with different configuration')
 
 	def __create_topic_config(self, config, num_partitions, replication_factor, topic_name) -> NewTopic:
 		if config is not None:

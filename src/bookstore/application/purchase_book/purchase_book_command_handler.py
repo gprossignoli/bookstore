@@ -34,7 +34,7 @@ class PurchaseBookCommandHandler(CommandHandler):
 		purchase = Purchase(book_id=command.book_id, user_id=command.user_id, quantity=command.quantity, price=book.price)
 		book.stock -= command.quantity
 
-		session = Session(db)
+		session = db.session
 		try:
 			session.add(book)
 			session.add(purchase)

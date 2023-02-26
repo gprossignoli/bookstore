@@ -9,12 +9,12 @@ ENV DEVELOPMENT $development
 
 WORKDIR /app
 
-COPY Pipfile /app/
-COPY Pipfile.lock /app/
-COPY books.csv /app/
-COPY .env /app/
-COPY .secrets.env /app/
-COPY src/. /app/
+COPY Pipfile .
+COPY Pipfile.lock .
+COPY books.csv .
+COPY .env .
+COPY .secrets.env .
+COPY src/. .
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 

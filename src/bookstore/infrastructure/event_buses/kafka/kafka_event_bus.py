@@ -1,3 +1,5 @@
+from logging import Logger
+
 from bookstore.domain.event import Event
 from bookstore.infrastructure.event_buses import EventBus
 from bookstore.infrastructure.event_buses.kafka.kafka_producer_factory import KafkaProducerFactory
@@ -6,24 +8,26 @@ from bookstore.infrastructure.event_buses.kafka.kafka_topics_manager import Kafk
 
 
 class KafkaEventBus(EventBus):
-	def __init__(self):
+	def __init__(self, logger: Logger):
+		self.__logger = logger
 		self.__topics_manager = KafkaTopicsManager()
 		self.__kafka_producer = KafkaProducerFactory().build()
 		self.__event_serializer = KafkaEventSerializer()
 
-# transacciones...
 	def publish(self, event: Event) -> None:
 		event_value = self.__event_serializer.serialize(event)
-
-		self.__create_topic(event.unique_identifier)
-		self.__kafka_producer.produce(topic=event.unique_identifier, value=event_value, on_delivery=self.__on_delivery)
+		try:
+			self.__create_topic(event.unique_identifier)
+			self.__kafka_producer.produce(topic=event.unique_identifier, value=event_value, key=event.id, on_delivery=self.__on_delivery)
+			self.__kafka_producer.flush()
+		except Exception as e:
+			raise e
 
 	def __on_delivery(self, err, msg) -> None:
 		if err:
-			print('ERROR: Message failed delivery: {}'.format(err))
+			self.__logger.warning(f"ERROR: Message {msg.value().decode('utf-8')} failed delivery: {err}")
 		else:
-			print("Produced event to topic {topic}: key = {key:12} value = {value:12}".format(
-				topic=msg.topic(), key=msg.key().decode('utf-8'), value=msg.value().decode('utf-8')))
+			self.__logger.info(f"Event to topic {msg.topic()}: key = {msg.key().decode('utf-8')}")
 
 	def __create_topic(self, event_identifier: str, partitions: int = 3, replication_factor: int = 3) -> None:
 		self.__topics_manager.create_topic(topic_name=event_identifier, num_partitions=partitions,

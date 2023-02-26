@@ -12,7 +12,7 @@ from flask_sqlalchemy.session import Session
 
 from bookstore.models.user import User
 from bookstore.models.book import Book
-from bookstore.settings import ROOT_DIR, db
+from bookstore.settings import db, BOOKS_DATA_PATH
 
 admin_blueprint = Blueprint(name="admin", import_name=__name__, url_prefix="/admin")
 
@@ -26,7 +26,7 @@ def gen_data():
 
 
 def __generate_books_data(session: Session = None) -> None:
-	file_path = f"{ROOT_DIR}/books.csv"
+	file_path = BOOKS_DATA_PATH
 	with open(file_path, 'r') as file:
 		reader = csv.DictReader(file)
 		rows = [row for row in reader]
