@@ -20,6 +20,10 @@ services:
     env_file:
       - .env
       - .secrets.env
+    volumes:
+      - ./src/bookstore.log:/bookstore.log
+      - ./src/bookstore_errors.log:/bookstore_errors.log
+      - ./src/publication_data.log:/publication_data.log
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     hostname: zookeeper

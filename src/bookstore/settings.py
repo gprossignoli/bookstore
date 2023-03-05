@@ -23,7 +23,6 @@ debug_logger.setFormatter(formatter)
 
 # to log general messages
 # x2 files of 2mb
-print(os.getcwd())
 info_logger = RotatingFileHandler(filename='../bookstore.log', maxBytes=2097152, backupCount=2)
 info_logger.setLevel(logging.INFO)
 info_logger.setFormatter(formatter)
@@ -37,9 +36,11 @@ logger.addHandler(debug_logger)
 logger.addHandler(info_logger)
 logger.addHandler(error_logger)
 
+publication_data_logger = logging.getLogger("publication_data")
+# x2 files of 2mb
+publication_data_handler = RotatingFileHandler(filename='../publication_data.log', maxBytes=2097152, backupCount=2)
+publication_data_logger.addHandler(publication_data_handler)
 
-logger.info(ROOT_DIR)
-logger.info(ENV_FILE)
 
 # API
 SECRET_KEY = os.getenv("SECRET_KEY")
