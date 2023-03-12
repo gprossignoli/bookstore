@@ -12,3 +12,8 @@ class BookRepository:
 			raise BookNotFoundException()
 
 		return book
+
+	def get_books_ids(self, max_books: int):
+		books = Book.query.filter(Book.stock > 0).limit(max_books).all()
+
+		return [book.id for book in books]

@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from bookstore.models.user import User
 
 
@@ -12,3 +14,7 @@ class UserRepository:
 			raise UserNotFoundException()
 
 		return user
+
+	def get_user_ids(self, max_users: int) -> Sequence:
+		data = User.query.limit(max_users).all()
+		return [user.id for user in data]
