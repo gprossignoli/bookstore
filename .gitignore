@@ -139,3 +139,9 @@ dmypy.json
 # Docker volumes
 postgres-data/
 /deploy/local_db/
+
+# logs
+bookstore.log
+bookstore_errors.log
+publication_data.log
+report_*.txt

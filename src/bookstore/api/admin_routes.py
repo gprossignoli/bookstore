@@ -10,6 +10,8 @@ from cerberus.errors import ValidationError
 from flask import Blueprint, Response, request
 from flask_sqlalchemy.session import Session
 
+from bookstore.cli.kafka_load_tester import KafkaLoadTester
+from bookstore.cli.report_generator import ReportGenerator
 from bookstore.models.user import User
 from bookstore.models.book import Book
 from bookstore.settings import db, BOOKS_DATA_PATH
@@ -166,3 +168,24 @@ def __validate_email(field, value, error) -> None:
 	regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
 	if not re.fullmatch(regex, value):
 		error(field, "User id has not a valid format")
+
+
+@admin_blueprint.route("/load_test", methods=["POST"])
+def load_test():
+	KafkaLoadTester().execute()
+	return Response(response={"load test completed"}, status=200)
+
+
+@admin_blueprint.route("/generate_report", methods=["POST"])
+def generate_report():
+	ReportGenerator().generate_report()
+	return Response(response={"report generation completed"}, status=200)
+
+
+@admin_blueprint.route("/experiment", methods=["POST"])
+def launch_experiment():
+	iterations = int(request.args.get("iterations", 1))
+	for i in range(iterations):
+		KafkaLoadTester().execute()
+		ReportGenerator().generate_report()
+	return Response(response={f"Experiments completed: {iterations}"}, status=200)

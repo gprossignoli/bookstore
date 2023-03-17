@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta
 from operator import itemgetter
 from statistics import stdev
@@ -45,7 +44,6 @@ class ReportGenerator:
 
         print(events_data)
 
-        file_name = datetime.now().strftime('report_%Y-%m-%d_%H_%M_%S')
         total_events = len(events_data)
         events_published = len([event for event in events_data.values() if event["failed_publish"] is False])
         events_not_published = total_events - events_published
@@ -59,7 +57,8 @@ class ReportGenerator:
         avg_throughput = sum(throughputs) / len(throughputs)
         stdev_throughput = stdev(throughputs)
 
-        with open(f"/home/gerardo/PycharmProjects/bookstore/src/{file_name}", 'w+') as file:
+        file_name = datetime.now().strftime('report_%Y-%m-%d_%H_%M_%S')
+        with open(f"/home/gerardo/PycharmProjects/bookstore/src/{file_name}.txt", 'w+') as file:
             file.writelines([f"Events generated: {total_events}\n", f"Events published: {events_published}\n",
                              f"Events not published: {events_not_published}\n",
                              f"Total fails: {total_failed_publications}\n",
@@ -67,6 +66,7 @@ class ReportGenerator:
                              f"Std deviation message throughput: {'{:.2f}'.format(msg_stdev_throughput)}\n",
                              f"Average total throughput: {'{:.2f}'.format(avg_throughput)} msg/sec\n",
                              f"Std deviation total throughput: {'{:.2f}'.format(stdev_throughput)}\n"])
+        self.__clean_last_experiment_from_log(log_file=file_path)
 
     def __calculate_total_throghput(self, events_data):
         events_by_delivery = [{"event_id": k, "delivery_at": event["delivery_timestamp"]} for k, event in
@@ -94,6 +94,9 @@ class ReportGenerator:
         if sum(throughputs) != len(events_ordered_by_delivery):
             raise Exception(f"smth is wrong: throughputs = {throughputs}, events: {len(events_ordered_by_delivery)}")
         return throughputs
+
+    def __clean_last_experiment_from_log(self, log_file: str) -> None:
+        open(log_file, "w").close()
 
 
 if __name__ == '__main__':
