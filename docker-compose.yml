@@ -8,15 +8,13 @@ services:
         development: "True"
     restart: on-failure
     ports:
-      - "8001:${FLASK_RUN_PORT}"
+      - "${FLASK_RUN_PORT}:8001"
     command: "pipenv run flask run --host=${FLASK_RUN_HOST} --port=8001"
     networks:
       - kafka
-      - default
+      - bookstore
     depends_on:
       - db
-      - zookeeper
-      - broker_c
     env_file:
       - .env
       - .secrets.env
@@ -24,72 +22,6 @@ services:
       - ./src/bookstore.log:/bookstore.log
       - ./src/bookstore_errors.log:/bookstore_errors.log
       - ./src/publication_data.log:/publication_data.log
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.0
-    hostname: zookeeper
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - ./deploy/kafka/zookeeper-data:/data
-      - ./deploy/kafka/zookeeper-datalog:/datalog
-    networks:
-      - kafka
-  broker_a:
-    image: confluentinc/cp-kafka:7.3.0
-    container_name: broker_a
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker_a:9092,CONNECTIONS_FROM_HOST://localhost:19091
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-    networks:
-      - kafka
-    ports:
-      - "19091:19091"
-    volumes:
-      - kafka_data_a:/var/lib/kafka/data
-  broker_b:
-    image: confluentinc/cp-kafka:7.3.0
-    container_name: broker_b
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker_b:9092,CONNECTIONS_FROM_HOST://localhost:19092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-    networks:
-      - kafka
-    ports:
-      - "19092:19092"
-    volumes:
-      - kafka_data_b:/var/lib/kafka/data
-  broker_c:
-    image: confluentinc/cp-kafka:7.3.0
-    container_name: broker_c
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker_c:9092,CONNECTIONS_FROM_HOST://localhost:19093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-    ports:
-      - "19093:19093"
-    volumes:
-      - kafka_data_c:/var/lib/kafka/data
-    networks:
-      - kafka
   db:
     image: postgres:11.8
     container_name: "bookstore_database"
@@ -105,13 +37,15 @@ services:
     env_file:
       - .env
       - .secrets.env
+    networks:
+      - bookstore
 
 networks:
   kafka:
+    external: true
     name: kafka
+  bookstore:
+    name: bookstore
 
 volumes:
-  kafka_data_a:
-  kafka_data_b:
-  kafka_data_c:
   postgres_data:
