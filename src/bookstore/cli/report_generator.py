@@ -7,7 +7,6 @@ class ReportGenerator:
     def generate_report(self):
         file_path = "/home/gerardo/PycharmProjects/bookstore/src/publication_data.log"
         events_data = {}
-        total_failed_publications = 0
 
         with open(file_path, 'r') as file:
             for line in file:
@@ -21,7 +20,6 @@ class ReportGenerator:
                 if "failed_to_publish_at" in timestamp_str or "failed_delivery_at" in timestamp_str:
                     failed_publish = True
                     events_data[event_id]["failed_publish"] = failed_publish
-                    total_failed_publications += 1
 
                 elif "published_at" in timestamp_str:
                     timestamp_publish_str = timestamp_str.replace("published_at:", "")
@@ -61,7 +59,6 @@ class ReportGenerator:
         with open(f"/home/gerardo/PycharmProjects/bookstore/src/{file_name}.txt", 'w+') as file:
             file.writelines([f"Events generated: {total_events}\n", f"Events published: {events_published}\n",
                              f"Events not published: {events_not_published}\n",
-                             f"Total fails: {total_failed_publications}\n",
                              f"Average message throughput: {'{:.2f}'.format(msg_avg_throughput)} ms\n",
                              f"Std deviation message throughput: {'{:.2f}'.format(msg_stdev_throughput)}\n",
                              f"Average total throughput: {'{:.2f}'.format(avg_throughput)} msg/sec\n",
