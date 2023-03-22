@@ -1,3 +1,5 @@
+from typing import List
+
 from bookstore.models.book import Book
 
 
@@ -13,7 +15,7 @@ class BookRepository:
 
 		return book
 
-	def get_books_ids(self, max_books: int):
+	def get_books_ids(self, max_books: int) -> List[int]:
 		books = Book.query.filter(Book.stock > 0).limit(max_books).all()
 
 		return [book.id for book in books]
