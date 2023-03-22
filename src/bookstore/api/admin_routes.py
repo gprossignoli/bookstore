@@ -182,8 +182,8 @@ def generate_report():
 	return Response(response={"report generation completed"}, status=200)
 
 
-@admin_blueprint.route("/experiment", methods=["POST"])
-def launch_experiment():
+@admin_blueprint.route("/launch_kafka_publications", methods=["POST"])
+def launch_kafka_publications():
 	iterations = int(request.args.get("iterations", 1))
 	for i in range(iterations):
 		KafkaLoadTester().execute()
