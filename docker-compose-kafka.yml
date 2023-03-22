@@ -66,6 +66,21 @@ services:
       - kafka_data_c:/var/lib/kafka/data
     networks:
       - kafka
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - 8080:8080
+    environment:
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=broker_a:9092
+      - KAFKA_CLUSTERS_0_READONLY=true
+    depends_on:
+      - zookeeper
+      - broker_a
+      - broker_b
+      - broker_c
+    networks:
+      - kafka
 volumes:
   kafka_data_a:
   kafka_data_b:
