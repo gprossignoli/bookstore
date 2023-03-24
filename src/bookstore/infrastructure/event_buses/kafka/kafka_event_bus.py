@@ -23,17 +23,21 @@ class KafkaEventBus(EventBus):
     def __init__(self, logger: Logger):
         self.__logger = logger
         self.__topics_manager = KafkaTopicsManager()
+        self.__topic_created = False
         self.__kafka_producer = KafkaProducerFactory().build()
         self.__event_serializer = KafkaEventSerializer()
 
     def publish(self, event: Event) -> None:
         event_value = self.__event_serializer.serialize(event)
 
-        try:
-            self.__create_topic(event.unique_identifier)
-        except Exception as e:
-            self.__logger.error(f"Error creating the topic {event.unique_identifier}")
-            raise e
+        if self.__topic_created is False:
+            try:
+                self.__create_topic(event.unique_identifier)
+                self.__topic_created = True
+                self.__topics_manager = None
+            except Exception as e:
+                self.__logger.error(f"Error creating the topic {event.unique_identifier}")
+                raise e
 
         try:
             self.__publish_event(event=event, event_value=event_value)
@@ -41,7 +45,7 @@ class KafkaEventBus(EventBus):
             raise e
 
     def __create_topic(
-        self, event_identifier: str, partitions: int = 3, replication_factor: int = 3
+            self, event_identifier: str, partitions: int = 3, replication_factor: int = 3
     ) -> None:
         self.__topics_manager.create_topic(
             topic_name=event_identifier,
