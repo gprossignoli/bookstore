@@ -62,12 +62,12 @@ class KafkaEventBus(EventBus):
             key=event.id,
             on_delivery=self.__on_delivery,
         )
-        self.__kafka_producer.poll(timeout=10)
+        self.__kafka_producer.flush(timeout=30)
 
     @register_delivery_data
     def __on_delivery(self, err, msg) -> None:
         if err:
-            self.__logger.warning(
+            self.__logger.info(
                 f"ERROR: Message {msg.value().decode('utf-8')} failed delivery: {err}"
             )
         else:
