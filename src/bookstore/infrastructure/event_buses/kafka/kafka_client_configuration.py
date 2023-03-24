@@ -18,4 +18,4 @@ class KafkaClientConfiguration:
             "reconnect.backoff.max.ms": 5000
         }
 
-		return self._base_configuration
+        return self._base_configuration
