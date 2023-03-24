@@ -21,13 +21,13 @@ class KafkaLoadTester:
 	def execute(self):
 		users = self.__load_users()
 		books = self.__load_books()
-
+		executor = CommandExecutor()
 		for book in books:
 			try:
 				purchase_book_command = PurchaseBookCommand(book_id=book, user_id=random.choice(users),
 															quantity=random.randint(1, 5))
 
-				CommandExecutor().execute(purchase_book_command)
+				executor.execute(purchase_book_command)
 				logger.info(f"Use case completed for {book}")
 			except BookException as e:
 				logger.error(f"Use case completed for {book}, error: {e}")
