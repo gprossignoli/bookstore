@@ -40,8 +40,6 @@ class ReportGenerator:
                         'publish_timestamp']
                     events_data[event_id]['msg_throughput'] = throughput
 
-        print(events_data)
-
         total_events = len(events_data)
         events_published = len([event for event in events_data.values() if event["failed_publish"] is False])
         events_not_published = total_events - events_published
