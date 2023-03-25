@@ -6,6 +6,8 @@ from bookstore.settings import db
 
 
 class OutboxRecord(db.Model):
+    __tablename__ = "outbox_records"
+
     id = db.Column(db.String, primary_key=True, default=uuid.uuid4)
     event_id = db.Column(db.String, primary_key=True)
     event_unique_identifier = db.Column(db.String, nullable=False)

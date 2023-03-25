@@ -12,9 +12,13 @@ from flask_sqlalchemy.session import Session
 
 from bookstore.cli.kafka_load_tester import KafkaLoadTester
 from bookstore.cli.report_generator import ReportGenerator
+from bookstore.infrastructure.event_buses import KafkaEventBusProducerFactory
+from bookstore.infrastructure.event_buses.transactional_outbox.message_relay import MessageRelay
+from bookstore.infrastructure.event_buses.transactional_outbox.sqlalchemy_transactional_outbox_repository_with_autocommit import \
+	SqlalchemyTransactionalOutboxRepositoryWithAutocommit
 from bookstore.models.user import User
 from bookstore.models.book import Book
-from bookstore.settings import db, BOOKS_DATA_PATH
+from bookstore.settings import db, BOOKS_DATA_PATH, logger
 
 admin_blueprint = Blueprint(name="admin", import_name=__name__, url_prefix="/admin")
 
@@ -187,5 +191,19 @@ def launch_kafka_publications():
 	iterations = int(request.args.get("iterations", 1))
 	for i in range(iterations):
 		KafkaLoadTester().execute()
+		transactional_outbox_worker()
 		ReportGenerator().generate_report()
 	return Response(response={f"Experiments completed: {iterations}"}, status=200)
+
+
+@admin_blueprint.route("/transactional-outbox-worker", methods=["POST"])
+def transactional_outbox_worker():
+	logger.info("Starting transactional outbox worker")
+	MessageRelay(
+		logger=logger,
+		outbox_repository=SqlalchemyTransactionalOutboxRepositoryWithAutocommit(
+			db_session=db.session
+		),
+		event_bus_producer=KafkaEventBusProducerFactory().build(),
+	).start()
+	return Response(response="ok",status=200)

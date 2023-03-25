@@ -32,11 +32,11 @@ class KafkaEventBusProducer(EventBusProducer):
 
         if self.__topic_created is False:
             try:
-                self.__create_topic(event.unique_identifier)
+                self.__create_topic(event.unique_identifier())
                 self.__topic_created = True
                 self.__topics_manager = None
             except Exception as e:
-                self.__logger.error(f"Error creating the topic {event.unique_identifier}")
+                self.__logger.error(f"Error creating the topic {event.unique_identifier()}")
                 raise e
 
         try:
@@ -57,7 +57,7 @@ class KafkaEventBusProducer(EventBusProducer):
     @register_publication_data
     def __publish_event(self, event: Event, event_value: str):
         self.__kafka_producer.produce(
-            topic=event.unique_identifier,
+            topic=event.unique_identifier(),
             value=event_value,
             key=event.id,
             on_delivery=self.__on_delivery,

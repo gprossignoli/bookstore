@@ -10,6 +10,6 @@ class PurchaseCreatedEvent(Event):
 	price: int
 	user_id: str
 
-	@property
-	def unique_identifier(self) -> str:
+	@classmethod
+	def unique_identifier(cls) -> str:
 		return "event.purchase.purchase_book.purchase_created"

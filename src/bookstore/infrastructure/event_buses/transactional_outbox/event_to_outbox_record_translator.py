@@ -10,8 +10,8 @@ class EventToOutboxRecordTranslator:
     def translate(self, event: Event) -> OutboxRecord:
         return OutboxRecord(
             event_id=event.id,
-            event_unique_identifier=event.unique_identifier,
-            payload=json.dumps(event.body),
+            event_unique_identifier=event.unique_identifier(),
+            payload=event.body,
             created_at=event.created_at,
             delivered_at=None,
             delivery_errors=0,
