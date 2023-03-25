@@ -44,15 +44,15 @@ class PurchaseBookCommandHandler(CommandHandler):
         try:
             session.add(book)
             session.add(purchase)
+
+            purchase_event = PurchaseCreatedEvent(
+                book_id=book.id,
+                quantity=purchase.quantity,
+                user_id=purchase.user_id,
+                price=purchase.price,
+            )
+            self.__event_bus.publish(purchase_event)
             session.commit()
         except Exception as e:
             session.rollback()
             raise e
-
-        purchase_event = PurchaseCreatedEvent(
-            book_id=book.id,
-            quantity=purchase.quantity,
-            user_id=purchase.user_id,
-            price=purchase.price,
-        )
-        self.__event_bus.publish(purchase_event)
