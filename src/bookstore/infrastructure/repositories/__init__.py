@@ -1,5 +1,5 @@
-from bookstore.infrastructure.repositories.book_repository import BookRepository, BookNotFoundException
-from bookstore.infrastructure.repositories.user_repository import UserRepository
+from bookstore.infrastructure.repositories.sqlalchemy_book_repository import SqlalchemyBookRepository
+from bookstore.infrastructure.repositories.sqlalchemy_user_repository import SqlalchemyUserRepository
 
 
-__all__ = ["BookRepository", "BookNotFoundException", "UserRepository"]
+__all__ = ["SqlalchemyBookRepository", "SqlalchemyUserRepository"]

@@ -2,15 +2,15 @@ import random
 
 from bookstore.application.purchase_book import PurchaseBookCommand
 from bookstore.infrastructure.command_executor import CommandExecutor
-from bookstore.infrastructure.repositories import UserRepository, BookRepository
+from bookstore.infrastructure.repositories import SqlalchemyBookRepository, SqlalchemyUserRepository
 from bookstore.models.book_exception import BookException
 from bookstore.settings import logger
 
 
 class KafkaLoadTester:
 	def __init__(self):
-		self.__user_repository = UserRepository()
-		self.__book_repository = BookRepository()
+		self.__user_repository = SqlalchemyUserRepository()
+		self.__book_repository = SqlalchemyBookRepository()
 
 	def __load_users(self):
 		return self.__user_repository.get_user_ids(max_users=10)

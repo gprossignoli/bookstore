@@ -1,20 +1,21 @@
-from bookstore.settings import db
-from bookstore.application.event_bus import EventBusProducer
-from bookstore.domain.purchase_book import PurchaseCreatedEvent
-from bookstore.models.purchase import Purchase
-from bookstore.models.purchase_exception import PurchaseException
 from bookstore.application.command_handler import CommandHandler
 from bookstore.application.purchase_book.purchase_book_command import (
     PurchaseBookCommand,
 )
-from bookstore.infrastructure.repositories import BookRepository, BookNotFoundException
-from bookstore.infrastructure.repositories import UserRepository
+from bookstore.application.repositories import BookRepository, UserRepository
+from bookstore.domain.book_not_found_exception import BookNotFoundException
+from bookstore.domain.user_not_found_exception import UserNotFoundException
+from bookstore.application.event_bus import EventBusProducer
+from bookstore.domain.purchase_book import PurchaseCreatedEvent
+from bookstore.models.purchase import Purchase
+from bookstore.models.purchase_exception import PurchaseException
+from bookstore.settings import db
 
 
 class PurchaseBookCommandHandler(CommandHandler):
-    def __init__(self, event_bus: EventBusProducer):
-        self.__book_repository = BookRepository()
-        self.__user_repository = UserRepository()
+    def __init__(self, book_repository: BookRepository, user_repository: UserRepository, event_bus: EventBusProducer):
+        self.__book_repository = book_repository
+        self.__user_repository = user_repository
         self.__event_bus = event_bus
 
     def execute(self, command: PurchaseBookCommand) -> None:
@@ -25,7 +26,7 @@ class PurchaseBookCommandHandler(CommandHandler):
 
         try:
             self.__user_repository.get_or_fail(user_id=command.user_id)
-        except BookNotFoundException:
+        except UserNotFoundException:
             raise PurchaseException("User not exists")
 
         if book.stock == 0 or book.stock - command.quantity < 0:
