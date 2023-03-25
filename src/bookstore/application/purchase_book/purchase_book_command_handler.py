@@ -1,6 +1,5 @@
-from flask_sqlalchemy.session import Session
-
 from bookstore.settings import db
+from bookstore.application.event_bus import EventBusProducer
 from bookstore.domain.purchase_book import PurchaseCreatedEvent
 from bookstore.models.purchase import Purchase
 from bookstore.models.purchase_exception import PurchaseException
@@ -8,13 +7,12 @@ from bookstore.application.command_handler import CommandHandler
 from bookstore.application.purchase_book.purchase_book_command import (
     PurchaseBookCommand,
 )
-from bookstore.infrastructure.event_buses import EventBus
 from bookstore.infrastructure.repositories import BookRepository, BookNotFoundException
 from bookstore.infrastructure.repositories import UserRepository
 
 
 class PurchaseBookCommandHandler(CommandHandler):
-    def __init__(self, event_bus: EventBus):
+    def __init__(self, event_bus: EventBusProducer):
         self.__book_repository = BookRepository()
         self.__user_repository = UserRepository()
         self.__event_bus = event_bus

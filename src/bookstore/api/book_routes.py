@@ -6,7 +6,7 @@ from flask import Blueprint, request, Response
 from cerberus.validator import Validator
 from cerberus.errors import ValidationError
 
-from bookstore.application.command_executor import CommandExecutor
+from bookstore.infrastructure.command_executor import CommandExecutor
 from bookstore.application.purchase_book.purchase_book_command import PurchaseBookCommand
 from bookstore.models.book_exception import BookException
 

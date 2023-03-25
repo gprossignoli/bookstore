@@ -1,7 +1,7 @@
 from logging import Logger
 
 from bookstore.domain.event import Event
-from bookstore.infrastructure.event_buses import EventBus
+from bookstore.application.event_bus import EventBusProducer
 from bookstore.infrastructure.event_buses.kafka.kafka_producer_factory import (
     KafkaProducerFactory,
 )
@@ -11,15 +11,15 @@ from bookstore.infrastructure.event_buses.kafka.kafka_event_serializer import (
 from bookstore.infrastructure.event_buses.kafka.kafka_topics_manager import (
     KafkaTopicsManager,
 )
-from bookstore.infrastructure.event_buses.register_delivery_data import (
+from bookstore.application.event_bus.register_delivery_data import (
     register_delivery_data,
 )
-from bookstore.infrastructure.event_buses.register_publication_data import (
+from bookstore.application.event_bus.register_publication_data import (
     register_publication_data,
 )
 
 
-class KafkaEventBus(EventBus):
+class KafkaEventBusProducer(EventBusProducer):
     def __init__(self, logger: Logger):
         self.__logger = logger
         self.__topics_manager = KafkaTopicsManager()

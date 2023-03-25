@@ -1,7 +1,7 @@
 import random
 
-from bookstore.application import CommandExecutor
 from bookstore.application.purchase_book import PurchaseBookCommand
+from bookstore.infrastructure.command_executor import CommandExecutor
 from bookstore.infrastructure.repositories import UserRepository, BookRepository
 from bookstore.models.book_exception import BookException
 from bookstore.settings import logger

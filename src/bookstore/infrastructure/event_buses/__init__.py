@@ -1,5 +1,4 @@
-from bookstore.infrastructure.event_buses.event_bus import EventBus
-from bookstore.infrastructure.event_buses.event_bus_factory import EventBusFactory
+from bookstore.infrastructure.event_buses.kafka import KafkaEventBusProducer, KafkaEventBusProducerFactory
 
 
-__all__ = ["EventBus", "EventBusFactory"]
+__all__ = ["KafkaEventBusProducer", "KafkaEventBusProducerFactory"]
