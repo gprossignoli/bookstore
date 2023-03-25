@@ -14,4 +14,4 @@ class OutboxRecordToEventTranslator:
         event_klass = self.__event_unique_identifier_to_mapper.get_event(record.event_unique_identifier)
         created_at = datetime.strftime(record.created_at, Event.DATE_TIME_FORMAT)
         return event_klass.reconstruct(event_id=record.id, created_at=created_at,
-                                       payload=json.loads(record.payload))
+                                       payload=record.payload)

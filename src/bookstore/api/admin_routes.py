@@ -199,11 +199,14 @@ def launch_kafka_publications():
 @admin_blueprint.route("/transactional-outbox-worker", methods=["POST"])
 def transactional_outbox_worker():
 	logger.info("Starting transactional outbox worker")
-	MessageRelay(
-		logger=logger,
-		outbox_repository=SqlalchemyTransactionalOutboxRepositoryWithAutocommit(
-			db_session=db.session
-		),
-		event_bus_producer=KafkaEventBusProducerFactory().build(),
-	).start()
-	return Response(response="ok",status=200)
+	# 10 * 100 evetnos
+	for i in range(10):
+		MessageRelay(
+			logger=logger,
+			outbox_repository=SqlalchemyTransactionalOutboxRepositoryWithAutocommit(
+				db_session=db.session
+			),
+			event_bus_producer=KafkaEventBusProducerFactory().build(),
+		).start()
+
+	return Response(response="ok", status=200)

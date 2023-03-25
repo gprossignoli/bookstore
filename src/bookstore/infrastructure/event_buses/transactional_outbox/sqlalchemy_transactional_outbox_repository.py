@@ -13,5 +13,5 @@ class SqlalchemyTransactionalOutboxRepository(TransactionalOutboxRepository):
     def save(self, record: OutboxRecord) -> None:
         db.session.add(record)
 
-    def find(self) -> Iterable[OutboxRecord]:
+    def find(self, **kwargs) -> Iterable[OutboxRecord]:
         return NotImplemented

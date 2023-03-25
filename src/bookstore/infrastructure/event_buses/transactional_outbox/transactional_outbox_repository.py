@@ -12,5 +12,5 @@ class TransactionalOutboxRepository(ABC):
         pass
 
     @abstractmethod
-    def find(self) -> Iterable[OutboxRecord]:
+    def find(self, batch_size: int = 100) -> Iterable[OutboxRecord]:
         pass
