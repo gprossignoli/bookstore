@@ -8,46 +8,12 @@ class ReportGenerator:
         file_path = "/home/gerardo/PycharmProjects/bookstore/src/publication_data.log"
         events_data = {}
 
-        with open(file_path, "r") as file:
-            for line in file:
-                data = line.split(",")
-                event_id = data[0].replace("Event:", "")
-                events_data.setdefault(event_id, {})
-
-                timestamp_str = data[1].replace("\n", "")
-
-                failed_publish = False
-                if (
-                    "failed_to_publish_at" in timestamp_str
-                    or "failed_delivery_at" in timestamp_str
-                ):
-                    failed_publish = True
-                    events_data[event_id]["failed_publish"] = failed_publish
-
-                elif "published_at" in timestamp_str:
-                    timestamp_publish_str = timestamp_str.replace("published_at:", "")
-                    publish_timestamp = datetime.fromisoformat(timestamp_publish_str)
-                    events_data[event_id]["publish_timestamp"] = publish_timestamp
-
-                elif "delivered_at" in timestamp_str:
-                    timestamp_delivery_str = timestamp_str.replace("delivered_at:", "")
-                    delivery_timestamp = datetime.fromisoformat(timestamp_delivery_str)
-                    events_data[event_id]["delivery_timestamp"] = delivery_timestamp
-
-                if failed_publish is False:
-                    events_data[event_id]["failed_publish"] = failed_publish
-
-                if (
-                    events_data[event_id].get("publish_timestamp") is not None
-                    and events_data[event_id].get("delivery_timestamp") is not None
-                ):
-                    throughput = (
-                        events_data[event_id]["delivery_timestamp"]
-                        - events_data[event_id]["publish_timestamp"]
-                    )
-                    events_data[event_id]["msg_throughput"] = throughput
+        self.__obtain_events_data_from_log(events_data, file_path)
 
         total_events = len(events_data)
+        if total_events == 0:
+            self.__clean_last_experiment_from_log(log_file=file_path)
+
         events_published = len(
             [
                 event
@@ -85,6 +51,59 @@ class ReportGenerator:
                 ]
             )
         self.__clean_last_experiment_from_log(log_file=file_path)
+
+    def __obtain_events_data_from_log(self, events_data, file_path):
+        with open(file_path, "r") as file:
+            for line in file:
+                data = line.split(",")
+                event_id = data[0].replace("Event:", "")
+                events_data.setdefault(event_id, {})
+
+                timestamp_str = data[1].replace("\n", "")
+
+                if (
+                    "failed_to_publish_at" in timestamp_str
+                    or "failed_delivery_at" in timestamp_str
+                ):
+                    self.__mark_failed_publish(event_id, events_data)
+                    continue
+
+                else:
+                    events_data[event_id]["failed_publish"] = False
+
+                if "published_at" in timestamp_str:
+                    self.__set_published_at_timestamp(event_id, events_data, timestamp_str)
+
+                elif "delivered_at" in timestamp_str:
+                    self.__set_delivery_timestamp(event_id, events_data, timestamp_str)
+
+                if (
+                    events_data[event_id].get("publish_timestamp") is not None
+                    and events_data[event_id].get("delivery_timestamp") is not None
+                ):
+                    self.__set_event_throughput(event_id, events_data)
+
+    def __mark_failed_publish(self, event_id: str, events_data: dict) -> bool:
+        failed_publish = True
+        events_data[event_id]["failed_publish"] = failed_publish
+        return failed_publish
+
+    def __set_published_at_timestamp(self, event_id: str, events_data: dict, timestamp_str: str) -> None:
+        timestamp_publish_str = timestamp_str.replace("published_at:", "")
+        publish_timestamp = datetime.fromisoformat(timestamp_publish_str)
+        events_data[event_id]["publish_timestamp"] = publish_timestamp
+
+    def __set_delivery_timestamp(self, event_id: str, events_data: dict, timestamp_str: str) -> None:
+        timestamp_delivery_str = timestamp_str.replace("delivered_at:", "")
+        delivery_timestamp = datetime.fromisoformat(timestamp_delivery_str)
+        events_data[event_id]["delivery_timestamp"] = delivery_timestamp
+
+    def __set_event_throughput(self, event_id, events_data):
+        throughput = (
+                events_data[event_id]["delivery_timestamp"]
+                - events_data[event_id]["publish_timestamp"]
+        )
+        events_data[event_id]["msg_throughput"] = throughput
 
     def __calculate_total_throghput(self, events_data):
         events_by_delivery = [
