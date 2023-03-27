@@ -1,3 +1,4 @@
+import click
 from flask import Blueprint
 
 from bookstore.cli.kafka_load_tester import KafkaLoadTester
@@ -24,14 +25,29 @@ def generate_report():
     ReportGenerator().generate_report()
 
 
+@cli_commands.cli.command("launch_kafka_publications")
+@click.argument("iterations")
+def launch_kafka_publications(iterations):
+    for i in range(iterations):
+        KafkaLoadTester().execute()
+        transactional_outbox_worker()
+        ReportGenerator().generate_report()
+
+    logger.info(f"Experiments completed: {iterations}")
+
+
 @cli_commands.cli.command("transactional-outbox-worker")
 def transactional_outbox_worker():
     logger.info("Starting transactional outbox worker")
     while True:
-        MessageRelay(
-            logger=logger,
-            outbox_repository=SqlalchemyTransactionalOutboxRepositoryWithAutocommit(
-                db_session=db.session
-            ),
-            event_bus_producer=KafkaEventBusProducerFactory().build(),
-        ).start()
+        try:
+            MessageRelay(
+                logger=logger,
+                outbox_repository=SqlalchemyTransactionalOutboxRepositoryWithAutocommit(
+                    db_session=db.session
+                ),
+                event_bus_producer=KafkaEventBusProducerFactory().build(),
+            ).start()
+        except Exception as e:
+            logger.exception(f"MessageRelay suffered an error: {e}")
+            logger.info("Resetting the execution of the MessageRelay")
