@@ -72,7 +72,9 @@ class ReportGenerator:
                     events_data[event_id]["failed_publish"] = False
 
                 if "published_at" in timestamp_str:
-                    self.__set_published_at_timestamp(event_id, events_data, timestamp_str)
+                    self.__set_published_at_timestamp(
+                        event_id, events_data, timestamp_str
+                    )
 
                 elif "delivered_at" in timestamp_str:
                     self.__set_delivery_timestamp(event_id, events_data, timestamp_str)
@@ -88,20 +90,24 @@ class ReportGenerator:
         events_data[event_id]["failed_publish"] = failed_publish
         return failed_publish
 
-    def __set_published_at_timestamp(self, event_id: str, events_data: dict, timestamp_str: str) -> None:
+    def __set_published_at_timestamp(
+        self, event_id: str, events_data: dict, timestamp_str: str
+    ) -> None:
         timestamp_publish_str = timestamp_str.replace("published_at:", "")
         publish_timestamp = datetime.fromisoformat(timestamp_publish_str)
         events_data[event_id]["publish_timestamp"] = publish_timestamp
 
-    def __set_delivery_timestamp(self, event_id: str, events_data: dict, timestamp_str: str) -> None:
+    def __set_delivery_timestamp(
+        self, event_id: str, events_data: dict, timestamp_str: str
+    ) -> None:
         timestamp_delivery_str = timestamp_str.replace("delivered_at:", "")
         delivery_timestamp = datetime.fromisoformat(timestamp_delivery_str)
         events_data[event_id]["delivery_timestamp"] = delivery_timestamp
 
     def __set_event_throughput(self, event_id, events_data):
         throughput = (
-                events_data[event_id]["delivery_timestamp"]
-                - events_data[event_id]["publish_timestamp"]
+            events_data[event_id]["delivery_timestamp"]
+            - events_data[event_id]["publish_timestamp"]
         )
         events_data[event_id]["msg_throughput"] = throughput
 
