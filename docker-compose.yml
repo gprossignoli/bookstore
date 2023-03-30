@@ -39,6 +39,26 @@ services:
       - .secrets.env
     networks:
       - bookstore
+  transactional-worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        development: "True"
+    restart: on-failure
+    command: "pipenv run flask transactional-outbox-worker"
+    networks:
+      - kafka
+      - bookstore
+    depends_on:
+      - db
+    env_file:
+      - .env
+      - .secrets.env
+    volumes:
+      - ./src/bookstore.log:/bookstore.log
+      - ./src/bookstore_errors.log:/bookstore_errors.log
+      - ./src/publication_data.log:/publication_data.log
 
 networks:
   kafka:

@@ -30,7 +30,18 @@ def generate_report():
 def launch_kafka_publications(iterations):
     for i in range(iterations):
         KafkaLoadTester().execute()
-        transactional_outbox_worker()
+        try:
+            for i in range(10):
+                MessageRelay(
+                    logger=logger,
+                    outbox_repository=SqlalchemyTransactionalOutboxRepositoryWithAutocommit(
+                        db_session=db.session
+                    ),
+                    event_bus_producer=KafkaEventBusProducerFactory().build(),
+                ).start()
+        except Exception as e:
+            logger.exception(f"MessageRelay suffered an error: {e}")
+            logger.info("Resetting the execution of the MessageRelay")
         ReportGenerator().generate_report()
 
     logger.info(f"Experiments completed: {iterations}")

@@ -19,6 +19,10 @@ from bookstore.application.event_bus.register_publication_data import (
 )
 
 
+class NotDeliveredException(Exception):
+    pass
+
+
 class KafkaEventBusProducer(EventBusProducer):
     def __init__(self, logger: Logger):
         self.__logger = logger
@@ -70,6 +74,7 @@ class KafkaEventBusProducer(EventBusProducer):
             self.__logger.info(
                 f"ERROR: Message {msg.value().decode('utf-8')} failed delivery: {err}"
             )
+            raise NotDeliveredException()
         else:
             self.__logger.info(
                 f"Event to topic {msg.topic()}: key = {msg.key().decode('utf-8')}"
