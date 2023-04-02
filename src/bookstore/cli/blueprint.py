@@ -1,5 +1,5 @@
 import click
-from flask import Blueprint
+from flask.cli import AppGroup
 
 from bookstore.cli.kafka_load_tester import KafkaLoadTester
 from bookstore.cli.report_generator import ReportGenerator
@@ -12,20 +12,20 @@ from bookstore.infrastructure.event_buses.transactional_outbox.sqlalchemy_transa
 )
 from bookstore.settings import logger, db
 
-cli_commands = Blueprint(name="cli", import_name="cli")
+cli_commands = AppGroup(name="cli")
 
 
-@cli_commands.cli.command("load-test")
+@cli_commands.command("load-test")
 def load_test():
     KafkaLoadTester().execute()
 
 
-@cli_commands.cli.command("generate-report")
+@cli_commands.command("generate-report")
 def generate_report():
     ReportGenerator().generate_report()
 
 
-@cli_commands.cli.command("launch_kafka_publications")
+@cli_commands.command("launch_kafka_publications")
 @click.argument("iterations")
 def launch_kafka_publications(iterations):
     for i in range(iterations):
@@ -47,7 +47,7 @@ def launch_kafka_publications(iterations):
     logger.info(f"Experiments completed: {iterations}")
 
 
-@cli_commands.cli.command("transactional-outbox-worker")
+@cli_commands.command("transactional-outbox-worker")
 def transactional_outbox_worker():
     logger.info("Starting transactional outbox worker")
     while True:

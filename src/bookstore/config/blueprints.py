@@ -8,4 +8,4 @@ from bookstore.cli.blueprint import cli_commands
 def register_blueprints(app: Flask) -> None:
 	app.register_blueprint(blueprint=book_blueprint)
 	app.register_blueprint(blueprint=admin_blueprint)
-	app.register_blueprint(blueprint=cli_commands)
+	app.cli.add_command(cli_commands)
