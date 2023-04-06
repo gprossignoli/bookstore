@@ -29,16 +29,18 @@ services:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    command: [ "postgres", "-c", "wal_level=logical" ]
     ports:
       - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./deploy/postgres/local_db:/docker-entrypoint-initdb.d
+      - ./deploy/postgres/local_db/init.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - .env
       - .secrets.env
     networks:
       - bookstore
+      - kafka
   transactional-worker:
     build:
       context: .

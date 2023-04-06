@@ -1,0 +1,24 @@
+{
+  "name": "source-connector-example",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.user": "debezium_user",
+    "database.password": "debezium_password",
+    "database.hostname": "172.27.0.2",
+    "database.port": "54321",
+    "database.dbname": "bookstore",
+    "tasks.max": "1",
+    "auto.create.topics.enable": "true",
+    "topic.prefix": "cdc.bookstore.json",
+    "table.include.list": "public.outbox_records",
+    "schema.history.internal.kafka.bootstrap.servers": "broker_a:9092,broker_b:9092,broker_c:9092",
+    "schema.history.internal.kafka.topic": "outbox_records.bookstore",
+	"plugin.name": "pgoutput",
+	"value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "publication.autocreate.mode": "filtered",
+    "topic.creation.default.replication.factor": "3",
+    "topic.creation.default.partitions": "1",
+    "topic.creation.default.cleanup.policy": "delete"
+  }
+}
