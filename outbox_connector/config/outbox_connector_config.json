@@ -4,7 +4,7 @@
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
     "database.user": "debezium_user",
     "database.password": "debezium_password",
-    "database.hostname": "172.27.0.2",
+    "database.hostname": "db",
     "database.port": "54321",
     "database.dbname": "bookstore",
     "tasks.max": "1",

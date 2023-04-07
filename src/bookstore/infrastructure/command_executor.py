@@ -5,14 +5,14 @@ from bookstore.application.purchase_book.purchase_book_command import (
 from bookstore.application.purchase_book.purchase_book_command_handler import (
     PurchaseBookCommandHandler,
 )
-from bookstore.infrastructure.event_buses.transactional_outbox.event_to_outbox_record_translator import (
-    EventToOutboxRecordTranslator,
+from bookstore.infrastructure.event_buses.debezium_outbox.debezium_outbox_event_bus_producer import (
+    DebeziumOutboxEventBusProducer,
 )
-from bookstore.infrastructure.event_buses.transactional_outbox.sqlalchemy_transactional_outbox_repository import (
-    SqlalchemyTransactionalOutboxRepository,
+from bookstore.infrastructure.event_buses.debezium_outbox.event_to_debezium_record_translator import (
+    EventToDebeziumRecordTranslator,
 )
-from bookstore.infrastructure.event_buses.transactional_outbox.transactional_outbox_event_bus_producer import (
-    TransactionalOutboxEventBusProducer,
+from bookstore.infrastructure.event_buses.debezium_outbox.sqlalchemy_debezium_outbox_repository import (
+    SqlalchemyDebeziumOutboxRepository,
 )
 from bookstore.infrastructure.repositories import (
     SqlalchemyBookRepository,
@@ -26,9 +26,9 @@ class CommandExecutor:
             PurchaseBookCommand.fqn(): PurchaseBookCommandHandler(
                 book_repository=SqlalchemyBookRepository(),
                 user_repository=SqlalchemyUserRepository(),
-                event_bus=TransactionalOutboxEventBusProducer(
-                    event_to_outbox_record_translator=EventToOutboxRecordTranslator(),
-                    outbox_repository=SqlalchemyTransactionalOutboxRepository(),
+                event_bus=DebeziumOutboxEventBusProducer(
+                    event_to_debezium_record_translator=EventToDebeziumRecordTranslator(),
+                    debezium_outbox_repository=SqlalchemyDebeziumOutboxRepository(),
                 ),
             )
         }
