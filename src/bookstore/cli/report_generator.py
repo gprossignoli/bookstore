@@ -28,7 +28,9 @@ class ReportGenerator:
             for v in events_data.values()
             if v.get("publication_latency") is not None
         ]
-        avg_publication_latency = sum(publication_latencies) / len(publication_latencies)
+        avg_publication_latency = sum(publication_latencies) / len(
+            publication_latencies
+        )
         stdev_publication_latency = stdev(publication_latencies)
 
         throughputs = self.__calculate_total_throghput(events_data)
@@ -104,9 +106,7 @@ class ReportGenerator:
         delivery_timestamp = datetime.fromisoformat(timestamp_delivery_str)
         events_data[event_id]["delivery_timestamp"] = delivery_timestamp
 
-    def __set_publication_latency(
-            self, event_id: str, events_data: dict
-    ) -> None:
+    def __set_publication_latency(self, event_id: str, events_data: dict) -> None:
         latency = (
             events_data[event_id]["delivery_timestamp"]
             - events_data[event_id]["publish_timestamp"]
