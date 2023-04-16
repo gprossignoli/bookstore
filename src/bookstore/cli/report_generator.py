@@ -104,7 +104,9 @@ class ReportGenerator:
         delivery_timestamp = datetime.fromisoformat(timestamp_delivery_str)
         events_data[event_id]["delivery_timestamp"] = delivery_timestamp
 
-    def __set_publication_latency(self, event_id, events_data):
+    def __set_publication_latency(
+            self, event_id: str, events_data: dict
+    ) -> None:
         latency = (
             events_data[event_id]["delivery_timestamp"]
             - events_data[event_id]["publish_timestamp"]
