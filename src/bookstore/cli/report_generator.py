@@ -23,13 +23,13 @@ class ReportGenerator:
         )
         events_not_published = total_events - events_published
 
-        msg_throughputs = [
-            (v["msg_throughput"].microseconds * 0.001)
+        publication_latencies = [
+            (v["publication_latency"].microseconds * 0.001)
             for v in events_data.values()
-            if v.get("msg_throughput") is not None
+            if v.get("publication_latency") is not None
         ]
-        msg_avg_throughput = sum(msg_throughputs) / len(msg_throughputs)
-        msg_stdev_throughput = stdev(msg_throughputs)
+        avg_publication_latency = sum(publication_latencies) / len(publication_latencies)
+        stdev_publication_latency = stdev(publication_latencies)
 
         throughputs = self.__calculate_total_throghput(events_data)
         avg_throughput = sum(throughputs) / len(throughputs)
@@ -44,8 +44,8 @@ class ReportGenerator:
                     f"Events generated: {total_events}\n",
                     f"Events published: {events_published}\n",
                     f"Events not published: {events_not_published}\n",
-                    f"Average message throughput: {'{:.2f}'.format(msg_avg_throughput)} ms\n",
-                    f"Std deviation message throughput: {'{:.2f}'.format(msg_stdev_throughput)}\n",
+                    f"Average publication latency: {'{:.2f}'.format(avg_publication_latency)} ms\n",
+                    f"Std deviation publication latency: {'{:.2f}'.format(stdev_publication_latency)}\n",
                     f"Average total throughput: {'{:.2f}'.format(avg_throughput)} msg/sec\n",
                     f"Std deviation total throughput: {'{:.2f}'.format(stdev_throughput)}\n",
                 ]
@@ -83,7 +83,7 @@ class ReportGenerator:
                     events_data[event_id].get("publish_timestamp") is not None
                     and events_data[event_id].get("delivery_timestamp") is not None
                 ):
-                    self.__set_event_throughput(event_id, events_data)
+                    self.__set_publication_latency(event_id, events_data)
 
     def __mark_failed_publish(self, event_id: str, events_data: dict) -> bool:
         failed_publish = True
@@ -104,12 +104,12 @@ class ReportGenerator:
         delivery_timestamp = datetime.fromisoformat(timestamp_delivery_str)
         events_data[event_id]["delivery_timestamp"] = delivery_timestamp
 
-    def __set_event_throughput(self, event_id, events_data):
-        throughput = (
+    def __set_publication_latency(self, event_id, events_data):
+        latency = (
             events_data[event_id]["delivery_timestamp"]
             - events_data[event_id]["publish_timestamp"]
         )
-        events_data[event_id]["msg_throughput"] = throughput
+        events_data[event_id]["publication_latency"] = latency
 
     def __calculate_total_throghput(self, events_data):
         events_by_delivery = [
