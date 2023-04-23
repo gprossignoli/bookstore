@@ -13,7 +13,12 @@ from bookstore.settings import db
 
 
 class PurchaseBookCommandHandler(CommandHandler):
-    def __init__(self, book_repository: BookRepository, user_repository: UserRepository, event_bus: EventBusProducer):
+    def __init__(
+        self,
+        book_repository: BookRepository,
+        user_repository: UserRepository,
+        event_bus: EventBusProducer,
+    ):
         self.__book_repository = book_repository
         self.__user_repository = user_repository
         self.__event_bus = event_bus
